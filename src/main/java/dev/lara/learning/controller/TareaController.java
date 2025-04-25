@@ -27,10 +27,10 @@ public class TareaController {
         return tareaService.obtenerTodas();
     }
 
-    @GetMapping("/{b}/filtrar")
-    public List<Tarea> filtrarTareas(@PathVariable boolean b){
-        return tareaService.filtrar(b);
-    }
+    // @GetMapping("/{b}/filtrar")
+    // public List<Tarea> filtrarTareas(@PathVariable boolean b){
+    //     return tareaService.filtrar(b);
+    // }
 
     //PUT: Marcar tarea como completada
     @PutMapping("/{id}/completar")

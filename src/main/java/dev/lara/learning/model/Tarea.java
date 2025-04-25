@@ -1,12 +1,31 @@
 package dev.lara.learning.model;
 
+import java.util.Date;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+
+@Entity
 public class Tarea {
+    @Id //Marca el campo como clave primaria
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto-incremental
     private Long id;
     private String titulo;
     private boolean completada;
 
-    public Tarea(Long id, String titulo, boolean completada){
-        this.id = id;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaCreacion = new Date();
+
+    //Constructor vacío (obligatorio para JPA)
+    public Tarea(){}
+    
+    //Los getters y los setters son obligatorios para JPA
+
+    public Tarea(String titulo, boolean completada){
         this.titulo = titulo;
         this.completada = completada;
     }
@@ -34,5 +53,13 @@ public class Tarea {
 
     public boolean getCompletada(){
         return completada;
+    }
+
+    public void setFechaCreacion(Date fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
+    public Date getFechaCreacion() {
+        return fechaCreacion;
     }
 }

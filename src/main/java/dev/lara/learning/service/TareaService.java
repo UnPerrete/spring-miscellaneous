@@ -1,6 +1,8 @@
 package dev.lara.learning.service;
 
 import dev.lara.learning.model.Tarea;
+import dev.lara.learning.repository.TareaRepository;
+
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -9,51 +11,51 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class TareaService {
-    private final List<Tarea> tareas = new ArrayList<>();
-    private final AtomicLong contadorId = new AtomicLong(1);
-
+    // private final List<Tarea> tareas = new ArrayList<>();
+    // private final AtomicLong contadorId = new AtomicLong(1);
+    
+    private TareaRepository tareaRepository;
+    public TareaService(TareaRepository tareaRepository) {
+        this.tareaRepository = tareaRepository;
+    }
     //Crear tarea
     public Tarea crearTarea(String titulo){
-        Tarea tarea = new Tarea(contadorId.getAndIncrement(), titulo, false);
-
-        tareas.add(tarea);
-        return tarea;
+        Tarea tarea = new Tarea(titulo, false);
+        return tareaRepository.save(tarea);
     }
 
     //Obtener todas las tareas
     public List<Tarea> obtenerTodas(){
-        return tareas;
+        return tareaRepository.findAll(); //
     }
 
     //Marcar como completada
     public Tarea completar(Long id){
-        Tarea tarea = tareas.stream()
-            .filter(t -> t.getId().equals(id))
-            .findFirst()
-            .orElseThrow(() -> new RuntimeException("Tarea no encontrada con ID: " + id));
-
-        tarea.setCompletada(true);
-        return tarea;
+        Tarea tarea = tareaRepository.findById(id).orElse(null);
+        if(tarea != null){
+            tarea.setCompletada(true);
+            return tareaRepository.save(tarea); //Actualiza en la DB 
+        }
+        return null;
     }
 
     public Tarea eliminar(Long id){
-        Tarea tarea = tareas.stream()
-            .filter(t -> t.getId().equals(id))
-            .findFirst()
-            .orElseThrow(() -> new RuntimeException("Tarea no encontrada con ID: " + id));
-
-        tareas.remove(tarea);
-        return tarea;
-    }
-
-    public List<Tarea> filtrar(boolean b){
-        List<Tarea> lista = new ArrayList<Tarea>();
-        //Boolean aux = Boolean.parseBoolean(b);
-        for (Tarea tarea : tareas) {
-            if(tarea.getCompletada() == b){
-                lista.add(tarea);
-            }
+        Tarea tarea = tareaRepository.findById(id).orElse(null);
+        if(tarea !=null){
+            tareaRepository.delete(tarea);
+            return tarea;
         }
-        return lista;
+        return null;
     }
+
+    // public List<Tarea> filtrar(boolean b){
+    //     List<Tarea> lista = new ArrayList<Tarea>();
+    //     //Boolean aux = Boolean.parseBoolean(b);
+    //     for (Tarea tarea : tareas) {
+    //         if(tarea.getCompletada() == b){
+    //             lista.add(tarea);
+    //         }
+    //     }
+    //     return lista;
+    // }
 }
